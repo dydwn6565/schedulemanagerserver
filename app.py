@@ -1,15 +1,17 @@
 
-from flask import Flask
+from flask import Flask,request
+import json
 from flask_cors import CORS
+# from ariadne import QueryType,MutationType
 from flask_sqlalchemy import SQLAlchemy
 from flask_graphql_auth import (
     AuthInfoField,
-    GraphQLAuth,
+    # GraphQLAuth,
     get_jwt_identity,
     get_raw_jwt,
     # create_access_token,
     # create_refresh_token,
-    query_jwt_required,
+    # query_jwt_required,
     mutation_jwt_refresh_token_required,
     mutation_jwt_required,
 )
@@ -19,6 +21,7 @@ from flask_jwt_extended import JWTManager
 from flask_graphql import GraphQLView
 from models.user import UserModel
 from models.schedule import ScheduleModel
+from models.message import MessageModel
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 app = Flask(__name__)
@@ -38,12 +41,18 @@ def create_tables():
     db.create_all()
 
 jwt = JWTManager(app)
-
+# query = QueryType()
+# mutation = MutationType()
 
 class ScheduleObject(SQLAlchemyObjectType):
    class Meta:
        model = ScheduleModel
        interfaces = (graphene.relay.Node, )
+
+# class MessageObject(SQLAlchemyObjectType):
+#    class Meta:
+#        model = MessageModel
+#        interfaces = (graphene.relay.Node, )
 
 class UserObject(SQLAlchemyObjectType):
    class Meta:
@@ -60,31 +69,65 @@ class CreateUser(graphene.Mutation):
     
     class Arguments:
         userId = graphene.String(required=True)
-        name = graphene.String(required=True)
+        
         password = graphene.String(required=True)
         # schedules = graphene.Int(required=True)
     
     user=graphene.Field(lambda:UserObject)
     
-    def mutate(self,info,userId,name,password):
-        # db.create_all()
+    def mutate(self,info,userId,password):
+        
         print(userId)
         user = UserModel.find_by_userId(userId)
-        # print("hit58")
+        # message = MessageModel("The username is already taken")
         if user:
             print("hit60")
-            return MessageField(message="The username is already taken")
+            return 
+            # return MessageField(message="The username is already taken"),401
         print("hit62")
-        user = UserModel(userId,name,password)
+        user = UserModel(userId,password)
         # if user:
             # access_token = graphene.String()
             # refresh_token = graphene.String()
         db.session.add(user)
         db.session.commit()
         return CreateUser(user)
+        
         # user = UserModel(userId =userId,name=name,password=password)
         # users = UserModel.find_by_id
         
+class DeleteSchedule(graphene.Mutation):
+    # Return Values
+    class Arguments:
+        id = graphene.String()
+    
+    message=graphene.Field(lambda:MessageField)
+    
+    def mutate(self, info, id):
+        print("hit99")
+        print(id)
+        # db.session.delete(id)
+        # db.session.commit()
+        # return DeleteSchedule(id)
+    
+        return MessageField("Successfullly deleted")
+
+        
+class DeleteUser(graphene.Mutation):
+    # Return Values
+    class Arguments:
+        id = graphene.String()
+    
+    message=graphene.Field(lambda:MessageField)
+    
+    def mutate(self, info, id):
+        print("hit99")
+        print(id)
+        # db.session.delete(id)
+        # db.session.commit()
+        # return DeleteSchedule(id)
+    
+        return MessageField("Successfullly deleted")
 
         
 
@@ -95,29 +138,38 @@ class CreateSchedule(graphene.Mutation):
         title = graphene.String(required=True)
         description = graphene.String(required=True)
         start = graphene.String(required=True)
-        end = graphene.String(required=True)
+        end = graphene.String()
+        color=graphene.String(required=True)
         userId = graphene.Int(required=True)
         # schedules = graphene.Int(required=True)
 
-    user=graphene.Field(lambda:UserObject)
+    schedule=graphene.Field(lambda:ScheduleObject)
     
-    def mutate(self,info,title,description,start,end,userId):
+    def mutate(self,info,title,description,start,end,color,userId):
         
-        schedule = ScheduleModel(title =title,description=description,start=start,end=end,userId=userId)
+        schedule = ScheduleModel(title ,description,start,end,color,userId)
         # db.create_all()
+        print("hit createSchedule")
         db.session.add(schedule)
+        
         db.session.commit()
 
-        return CreateSchedule()
+        # return CreateSchedule()
+        return MessageField(message="Successfullly inserted")
+        # return CreateSchedule(schedule)
+
+
 
 
 class MessageField(graphene.ObjectType):
+    
     message = graphene.String()
 
 
 class ProtectedUnion(graphene.Union):
     class Meta:
         types = (MessageField, AuthInfoField)
+        # types = (MessageField)
 
     @classmethod
     def resolve_type(cls, instance, info):
@@ -139,7 +191,7 @@ class AuthMutation(graphene.Mutation):
         
         user = UserModel.find_by_userId(userId)
         if user :
-            print("hit")
+            
             return AuthMutation(
             access_token=create_access_token(identity =userId),
             refresh_token=create_refresh_token(userId),
@@ -173,13 +225,16 @@ class RefreshMutation(graphene.Mutation):
         current_user = get_jwt_identity()
         return RefreshMutation(
             new_token=create_access_token(identity=current_user),
+            
         )
 
 
 
 class Mutation(graphene.ObjectType):
     create_user =CreateUser.Field()
+    delete_user = DeleteUser.Field()
     create_schedule =CreateSchedule.Field()
+    delete_schedule = DeleteSchedule.Field()
     auth = AuthMutation.Field()
     refresh = RefreshMutation.Field()
     protected = ProtectedMutation.Field()
@@ -199,14 +254,27 @@ app.add_url_rule(
 # def create_tables():
 #     db.create_all()
 
-# @app.route("/")
+# @query.field("addDateSchedule")
+# @mutation.filed("addDateSchedule")
+# def add_dates_schedule():
+#     print ("hit")
+#     return 
 # def home():
 #     return "Hello, Flask!"
 
-# @app.route("/asf")
-# def home():
-#     return "Hello, Flask!"
-
+@app.route('/', methods=['POST'])
+def root_route():
+    print("hit")
+    args= request.get_json().get("query")
+    print(type(args))
+    # jsonStr = json.dumps(args.get("query"))
+    # print(jsonStr)
+    result = schema.execute(args)
+    print(result)
+    return {
+        "data": result.data
+    }
+    
 if __name__ == '__main__':
     from db import db
     db.init_app(app)

@@ -9,17 +9,19 @@ class ScheduleModel(db.Model):
     title = db.Column(db.String(256),index=True,nullable=False)
     description=db.Column(db.Text,nullable=False)
     start =db.Column(db.String(80),nullable=False)
-    end =db.Column(db.String(80),nullable=False)
+    end =db.Column(db.String(80),nullable=True)
+    color=db.Column(db.String(20),nullable=False)
     userId =db.Column(db.Integer, db.ForeignKey("users.id"),nullable=False)
 
-    def __init__(self,title,description,start,end):
+    def __init__(self,title,description,start,end,color,userId):
         self.title = title
         self.description = description
         self.start = start
         self.end = end
-
+        self.userId= userId
+        self.color=color
     def json(self):
-        return {'title':self.title, 'description':self.description, 'start':self.start,'end':self.end}
+        return {'title':self.title, 'description':self.description, 'start':self.start,'userId':self.userId,"color":self.color}
 
     def save_to_db(self):
         db.session.add(self)
