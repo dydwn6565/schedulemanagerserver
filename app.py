@@ -1,4 +1,5 @@
 
+from tabnanny import check
 from flask import Flask,request
 import json
 from flask_cors import CORS
@@ -24,6 +25,7 @@ from models.schedule import ScheduleModel
 from models.message import MessageModel
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
+from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 CORS(app)
 
@@ -41,6 +43,8 @@ def create_tables():
     db.create_all()
 
 jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
+
 # query = QueryType()
 # mutation = MutationType()
 
@@ -99,18 +103,24 @@ class CreateUser(graphene.Mutation):
 class DeleteSchedule(graphene.Mutation):
     # Return Values
     class Arguments:
-        id = graphene.String()
+        scheduleid = graphene.String()
     
-    message=graphene.Field(lambda:MessageField)
+    schedule=graphene.Field(lambda:ScheduleObject)
     
-    def mutate(self, info, id):
+    def mutate(self, info, scheduleid):
+        
         print("hit99")
-        print(id)
-        # db.session.delete(id)
-        # db.session.commit()
-        # return DeleteSchedule(id)
+        print("id"+scheduleid)
+        print(type(scheduleid))
+        # schedule =ScheduleModel.find_by_id(3)
+        schedule =ScheduleModel.find_by_id(scheduleid)
+        
+        print(schedule)
+        db.session.delete(schedule)
+        db.session.commit()
+        
     
-        return MessageField("Successfullly deleted")
+        return DeleteSchedule()
 
         
 class DeleteUser(graphene.Mutation):
@@ -123,8 +133,8 @@ class DeleteUser(graphene.Mutation):
     def mutate(self, info, id):
         print("hit99")
         print(id)
-        # db.session.delete(id)
-        # db.session.commit()
+        db.session.delete(id)
+        db.session.commit()
         # return DeleteSchedule(id)
     
         return MessageField("Successfullly deleted")
@@ -190,12 +200,19 @@ class AuthMutation(graphene.Mutation):
     def mutate(cls,_,info,userId, password):
         
         user = UserModel.find_by_userId(userId)
+        
+        print(user.json()["password"])
+        print(password)
         if user :
-            
-            return AuthMutation(
-            access_token=create_access_token(identity =userId),
-            refresh_token=create_refresh_token(userId),
-        )
+            checkPassword = bcrypt.check_password_hash(user.json()["password"], password) 
+            print(checkPassword)
+            if(checkPassword):
+
+                return AuthMutation(
+                access_token=create_access_token(identity =userId),
+                refresh_token=create_refresh_token(userId),
+                )
+            return MessageField()
        
 
 

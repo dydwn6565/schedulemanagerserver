@@ -1,17 +1,17 @@
 import sqlite3
 from db import db
-from models.user import UserModel
+
 
 class ScheduleModel(db.Model):
     __tablename__ ='schedule'
 
-    id=db.Column(db.Integer,primary_key=True)
+    scheduleid=db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(256),index=True,nullable=False)
     description=db.Column(db.Text,nullable=False)
     start =db.Column(db.String(80),nullable=False)
     end =db.Column(db.String(80),nullable=True)
     color=db.Column(db.String(20),nullable=False)
-    userId =db.Column(db.Integer, db.ForeignKey("users.id"),nullable=False)
+    userId =db.Column(db.Integer, db.ForeignKey("users.usertableid"),nullable=False)
 
     def __init__(self,title,description,start,end,color,userId):
         self.title = title
@@ -21,7 +21,7 @@ class ScheduleModel(db.Model):
         self.userId= userId
         self.color=color
     def json(self):
-        return {'title':self.title, 'description':self.description, 'start':self.start,'userId':self.userId,"color":self.color}
+        return {"id":self.scheduleid,'title':self.title, 'description':self.description, 'start':self.start,'userId':self.userId,"color":self.color}
 
     def save_to_db(self):
         db.session.add(self)
@@ -32,10 +32,9 @@ class ScheduleModel(db.Model):
         db.session.commit()
     
 
+   
+   
     @classmethod
-    def find_by_name(cls,name):
-        return cls.query.filter_by(name=name).first()
-
-    @classmethod
-    def find_by_id(cls,_id):
-        return cls.query.filter_by(id=_id).first()
+    def find_by_id(cls,scheduleid):
+        return cls.query.filter_by(scheduleid=scheduleid).first()
+        # return cls.query.all()

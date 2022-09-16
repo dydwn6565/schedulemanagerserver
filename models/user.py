@@ -4,7 +4,7 @@ from db import db
 class UserModel(db.Model):
     __tablename__ ='users'
 
-    id=db.Column(db.Integer,primary_key=True)
+    usertableid=db.Column(db.Integer,primary_key=True)
     userId = db.Column(db.String(80),unique=True,nullable=False)
     password =db.Column(db.String(80),nullable=False)
     # schedules =db.relationship("ScheduleModel",backref="writer")
@@ -13,10 +13,11 @@ class UserModel(db.Model):
         self.userId = userId
         
         self.password = password
-        
+    
+    
 
     def json(self):
-        return {'userId':self.userId,  'password':self.password}
+        return {"usertableid":self.usertableid,'userId':self.userId,  'password':self.password}
 
     def save_to_db(self):
         db.session.add(self)
@@ -34,5 +35,5 @@ class UserModel(db.Model):
         return cls.query.filter_by(userId=userId).first()
 
     @classmethod
-    def find_by_id(cls,_id):
-        return cls.query.filter_by(id=_id).first()
+    def find_by_id(cls,usertableid):
+        return cls.query.filter_by(id=usertableid).first()
