@@ -20,9 +20,14 @@ class UserObject(SQLAlchemyObjectType):
        interfaces = (graphene.relay.Node, )
 
 
+class Person(graphene.ObjectType):
+    name = graphene.String()
+    age= graphene.String()
 
 class Query(graphene.ObjectType):
+    array = graphene.List(ScheduleObject)
     node = graphene.relay.Node.Field()
     all_schedules = SQLAlchemyConnectionField(ScheduleObject)
     all_users = SQLAlchemyConnectionField(UserObject)
-
+    # shedule_by_id = graphene.Field(ScheduleObject, usertableid=graphene.String())
+    # def 

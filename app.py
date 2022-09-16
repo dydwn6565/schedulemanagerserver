@@ -12,7 +12,7 @@ from flask_graphql import GraphQLView
 from graphqls.query import Query
 import graphene
 
-from flask_bcrypt import Bcrypt
+# from flask_bcrypt import Bcrypt
 
 from graphqls.mutations.createuser import CreateUser
 from graphqls.mutations.auth import AuthMutation
@@ -21,6 +21,8 @@ from graphqls.mutations.deleteuser import DeleteUser
 from graphqls.mutations.deleteschedule import DeleteSchedule
 from graphqls.mutations.protected import ProtectedMutation
 from graphqls.mutations.refresh import RefreshMutation
+from graphqls.mutations.getschedule import GetScheduleMutation
+from models.user import UserModel
 app = Flask(__name__)
 CORS(app)
 
@@ -28,7 +30,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"]= True
 app.config["JWT_SECRET_KEY"] = "something"  # change this!
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 10  # 10 minutes
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 100  # 10 minutes
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30  # 30 days
 
 
@@ -38,12 +40,41 @@ def create_tables():
     db.create_all()
 
 jwt = JWTManager(app)
-bcrypt = Bcrypt(app)
+# bcrypt = Bcrypt(app)
 
+# class AuthMutation(graphene.Mutation):
+#     class Arguments:
+#         userId = graphene.String()
+#         password = graphene.String()
+        
+#     access_token = graphene.String()
+#     refresh_token = graphene.String()
+    
+    
+    
+#     @classmethod
+#     def mutate(cls,_,info,userId, password):
+        
+#         user = UserModel.find_by_userId(userId)
+        
+#         # print(user.json()["password"])
+#         # print(password)
+#         if user :
+#             checkPassword = bcrypt.check_password_hash(user.json()["password"], password) 
+#             print(checkPassword)
+#             if(checkPassword):
 
+#                 return AuthMutation(
+#                 access_token=create_access_token(identity =userId),
+#                 refresh_token=create_refresh_token(userId),
+#                 )
+#             return AuthMutation()
+#         return AuthMutation()
+       
 
 
 class Mutation(graphene.ObjectType):
+    get_schedule =GetScheduleMutation.Field()
     create_user =CreateUser.Field()
     delete_user = DeleteUser.Field()
     create_schedule =CreateSchedule.Field()

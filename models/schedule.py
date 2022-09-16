@@ -36,5 +36,6 @@ class ScheduleModel(db.Model):
    
     @classmethod
     def find_by_id(cls,scheduleid):
-        return cls.query.filter_by(scheduleid=scheduleid).first()
+        # print(type(scheduleid))
+        return cls.query.filter_by(userId=int(scheduleid)).all()
         # return cls.query.all()
