@@ -55,14 +55,14 @@ class Mutation(graphene.ObjectType):
 schema = graphene.Schema(query=Query,mutation=Mutation)
 
 
-app.add_url_rule(
-    '/graphql-api',
-    view_func=GraphQLView.as_view(
-        'graphql',
-        schema=schema,
-        graphiql=True # for having the GraphiQL interface
-    )
-)
+# app.add_url_rule(
+#     '/graphql-api',
+#     view_func=GraphQLView.as_view(
+#         'graphql',
+#         schema=schema,
+#         graphiql=True # for having the GraphiQL interface
+#     )
+# )
 @app.route("/")
 def home():
     return "hi"
