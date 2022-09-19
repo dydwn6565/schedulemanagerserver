@@ -63,9 +63,6 @@ app.add_url_rule(
         graphiql=True # for having the GraphiQL interface
     )
 )
-@app.route('/', methods=['GET'])
-def home():
-    return "This is schedulemanangerserver page"
 
 
 @app.route('/', methods=['POST'])
@@ -79,7 +76,7 @@ def root_route():
     print(result)
     return {
         "data": result.data
-    }
+    },200
     
 if __name__ == '__main__':
     from db import db
