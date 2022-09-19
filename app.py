@@ -2,7 +2,7 @@
 from tabnanny import check
 from flask import Flask,request
 import json
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
@@ -95,6 +95,7 @@ app.add_url_rule(
 )
 
 @app.route('/', methods=['POST'])
+@cross_origin(origin='*')
 def root_route():
     print("hit")
     args= request.get_json().get("query")
