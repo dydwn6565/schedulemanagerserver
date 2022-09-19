@@ -69,7 +69,7 @@ def home():
 
 
 @app.route('/', methods=['POST'])
-@cross_origin(origin=["https://schedulemanager.vercel.app/"])
+@cross_origin(origin=["https://schedulemanager.vercel.app"])
 def root_route():
     print("hit")
     args= request.get_json().get("query")
