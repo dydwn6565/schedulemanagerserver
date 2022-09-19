@@ -1,5 +1,5 @@
 {
-    "verson":1,
+    "version":2,
     "builds":[{
         "src":"./run.py",
         "use":"@vercel/pyhon"
