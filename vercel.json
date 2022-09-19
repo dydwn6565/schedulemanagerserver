@@ -1,0 +1,14 @@
+{
+    "verson":1,
+    "builds":[{
+        "src":"./run.py",
+        "use":"@vercel/pyhon"
+    }
+],
+"routes":[
+    {
+        "src":"/(.*)",
+        "dest":"/"
+    }
+]
+}
