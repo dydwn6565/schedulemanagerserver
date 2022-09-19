@@ -35,9 +35,9 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30  # 30 days
 
 CORS(app)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 jwt = JWTManager(app)
 
