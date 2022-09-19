@@ -33,7 +33,7 @@ app.config["JWT_SECRET_KEY"] = "something"  # change this!
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 100  # 10 minutes
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30  # 30 days
 
-# CORS(app)
+CORS(app)
 
 # @app.before_first_request
 # def create_tables():
@@ -66,7 +66,7 @@ app.add_url_rule(
 
 
 @app.route('/', methods=['POST'])
-@cross_origin(origin=["https://schedulemanager.vercel.app/"])
+# @cross_origin(origin="*")
 def root_route():
     print("hit")
     args= request.get_json().get("query")
