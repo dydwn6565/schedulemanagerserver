@@ -63,7 +63,9 @@ app.add_url_rule(
         graphiql=True # for having the GraphiQL interface
     )
 )
-
+@app.route("/a",method=["GET"])
+def home():
+    return "hi"
 
 @app.route('/', methods=['POST'])
 # @cross_origin(origin="*")
