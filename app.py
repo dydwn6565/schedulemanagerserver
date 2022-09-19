@@ -63,19 +63,21 @@ app.add_url_rule(
         graphiql=True # for having the GraphiQL interface
     )
 )
-
-@app.route('/', methods=['POST'])
-# @cross_origin(origin="*")
-def root_route():
-    print("hit")
-    args= request.get_json().get("query")
-    print(type(args))
+@app.route("/")
+def home():
+    return "hi"
+# @app.route('/', methods=['POST'])
+# # @cross_origin(origin="*")
+# def root_route():
+#     print("hit")
+#     args= request.get_json().get("query")
+#     print(type(args))
     
-    result = schema.execute(args)
-    print(result)
-    return {
-        "data": result.data
-    },200
+#     result = schema.execute(args)
+#     print(result)
+#     return {
+#         "data": result.data
+#     },200
     
 if __name__ == '__main__':
     from db import db
