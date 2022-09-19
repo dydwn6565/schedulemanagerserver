@@ -24,7 +24,7 @@ from graphqls.mutations.refresh import RefreshMutation
 from graphqls.mutations.getschedule import GetScheduleMutation
 from models.user import UserModel
 app = Flask(__name__)
-CORS(app)
+
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -33,44 +33,14 @@ app.config["JWT_SECRET_KEY"] = "something"  # change this!
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 100  # 10 minutes
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 30  # 30 days
 
-
+CORS(app)
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
 jwt = JWTManager(app)
-# bcrypt = Bcrypt(app)
 
-# class AuthMutation(graphene.Mutation):
-#     class Arguments:
-#         userId = graphene.String()
-#         password = graphene.String()
-        
-#     access_token = graphene.String()
-#     refresh_token = graphene.String()
-    
-    
-    
-#     @classmethod
-#     def mutate(cls,_,info,userId, password):
-        
-#         user = UserModel.find_by_userId(userId)
-        
-#         # print(user.json()["password"])
-#         # print(password)
-#         if user :
-#             checkPassword = bcrypt.check_password_hash(user.json()["password"], password) 
-#             print(checkPassword)
-#             if(checkPassword):
-
-#                 return AuthMutation(
-#                 access_token=create_access_token(identity =userId),
-#                 refresh_token=create_refresh_token(userId),
-#                 )
-#             return AuthMutation()
-#         return AuthMutation()
-       
 
 
 class Mutation(graphene.ObjectType):
@@ -95,7 +65,7 @@ app.add_url_rule(
 )
 
 @app.route('/', methods=['POST'])
-@cross_origin(origin='*')
+@cross_origin(origin=["https://schedulemanager.vercel.app/"])
 def root_route():
     print("hit")
     args= request.get_json().get("query")
