@@ -2,7 +2,7 @@
 from tabnanny import check
 from flask import Flask,request
 import json
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
@@ -55,33 +55,32 @@ class Mutation(graphene.ObjectType):
 schema = graphene.Schema(query=Query,mutation=Mutation)
 
 
-# app.add_url_rule(
-#     '/graphql-api',
-#     view_func=GraphQLView.as_view(
-#         'graphql',
-#         schema=schema,
-#         graphiql=True # for having the GraphiQL interface
-#     )
-# )
-@app.route("/")
-def home():
-    return "hi"
-# @app.route('/', methods=['POST'])
-# # @cross_origin(origin="*")
-# def root_route():
-#     print("hit")
-#     args= request.get_json().get("query")
-#     print(type(args))
+app.add_url_rule(
+    '/graphql-api',
+    view_func=GraphQLView.as_view(
+        'graphql',
+        schema=schema,
+        graphiql=True # for having the GraphiQL interface
+    )
+)
+
+
+
+@app.route('/', methods=['POST'])
+# @cross_origin(origin="*")
+def root_route():
+    print("hit")
+    args= request.get_json().get("query")
+    print(type(args))
     
-#     result = schema.execute(args)
-#     print(result)
-#     return {
-#         "data": result.data
-#     },200
+    result = schema.execute(args)
+    print(result)
+    return {
+        "data": result.data
+    },200
     
 if __name__ == '__main__':
     from db import db
     db.init_app(app)
     
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(port=5000, debug=True)
