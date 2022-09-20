@@ -7,7 +7,7 @@ class MessageModel(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     message = db.Column(db.String(100),unique=True,nullable=False)
     
-    # schedules =db.relationship("ScheduleModel",backref="writer")
+    
 
     def __init__(self,message):
         self.message = message

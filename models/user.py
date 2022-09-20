@@ -7,7 +7,7 @@ class UserModel(db.Model):
     usertableid=db.Column(db.Integer,primary_key=True)
     userId = db.Column(db.String(80),unique=True,nullable=False)
     password =db.Column(db.String(80),nullable=False)
-    # schedules =db.relationship("ScheduleModel",backref="writer")
+    
 
     def __init__(self,userId,password):
         self.userId = userId

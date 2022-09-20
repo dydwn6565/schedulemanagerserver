@@ -16,6 +16,6 @@ class DeleteUser(graphene.Mutation):
         print(id)
         db.session.delete(id)
         db.session.commit()
-        # return DeleteSchedule(id)
+        
     
         return MessageField("Successfullly deleted")

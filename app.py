@@ -67,7 +67,7 @@ app.add_url_rule(
 
 
 @app.route('/', methods=['POST'])
-# @cross_origin(origin="*")
+
 def root_route():
     print("hit")
     args= request.get_json().get("query")

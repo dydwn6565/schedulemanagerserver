@@ -14,19 +14,19 @@ class CreateSchedule(graphene.Mutation):
         end = graphene.String()
         color=graphene.String(required=True)
         userId = graphene.Int(required=True)
-        # schedules = graphene.Int(required=True)
+        
 
     schedule=graphene.Field(lambda:ScheduleObject)
     
     def mutate(self,info,title,description,start,end,color,userId):
         
         schedule = ScheduleModel(title ,description,start,end,color,userId)
-        # db.create_all()
-        print("hit createSchedule")
+        
+        
         db.session.add(schedule)
         
         db.session.commit()
 
-        # return CreateSchedule()
+        
         return MessageField(message="Successfullly inserted")
-        # return CreateSchedule(schedule)
+        

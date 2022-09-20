@@ -1,3 +1,4 @@
+from sched import scheduler
 import sqlite3
 from db import db
 
@@ -35,7 +36,15 @@ class ScheduleModel(db.Model):
    
    
     @classmethod
-    def find_by_id(cls,scheduleid):
-        # print(type(scheduleid))
-        return cls.query.filter_by(userId=int(scheduleid)).all()
-        # return cls.query.all()
+    def find_by_id(cls,usertableid):
+        
+        return cls.query.filter_by(userId=int(usertableid)).all()
+        
+
+    @classmethod
+    def delete_schedule_with_user_id(cls,usertableid,scheduleid):
+        
+        print(usertableid)
+        print(scheduleid)
+        return cls.query.filter_by(userId=int(usertableid)).filter_by(scheduleid=scheduleid).first()
+        

@@ -23,8 +23,7 @@ class AuthMutation(graphene.Mutation):
         
         user = UserModel.find_by_userId(userId)
         
-        # print(user.json()["password"])
-        # print(password)
+        
         if user :
             print(type(user.usertableid))
             checkPassword = bcrypt.check_password_hash(user.json()["password"], password) 
